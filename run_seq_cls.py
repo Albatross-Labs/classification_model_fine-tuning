@@ -6,7 +6,7 @@ import glob
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
+from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, WeightedRandomSampler
 from fastprogress.fastprogress import master_bar, progress_bar
 from attrdict import AttrDict
 
@@ -28,6 +28,7 @@ from processor import seq_cls_load_and_cache_examples as load_and_cache_examples
 from processor import seq_cls_tasks_num_labels as tasks_num_labels
 from processor import seq_cls_processors as processors
 from processor import seq_cls_output_modes as output_modes
+import processor
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +39,15 @@ def train(args,
           dev_dataset=None,
           test_dataset=None):
     ### weighted sampler 적용
+    data_labels=processor.InputFeatures.labels #data 전체의 label (index로 표시되어 있음)
+    class_sample_count=np.array([len(np.where(data_labels==t)[0]) for t in np.unique(data_labels)]) #class 별로 개수 count
+    weight=1./class_sample_count
+    samples_weight=np.arrary([weight[t] for t in data_labels])
+    samples_weight=torch.from_numpy(samples_weight)
+    train_sampler=WeightedRandomSampler(samples_weight.type('torch.DoubleTensor'), len(samples_weight))
 
-    train_sampler = RandomSampler(train_dataset)
+    ### random sample 적용
+    #train_sampler = RandomSampler(train_dataset)
 
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
     if args.max_steps > 0:

@@ -74,12 +74,12 @@ def seq_cls_convert_examples_to_features(args, examples, tokenizer, max_length, 
 
     def label_from_example(example):
         if output_mode == "classification":
-            return label_map[example.label]
+            return label_map[example.label] #label_map은 각 label을 인덱스로 표시하고 있음
         elif output_mode == "regression":
             return float(example.label)
         raise KeyError(output_mode)
 
-    labels = [label_from_example(example) for example in examples]
+    labels = [label_from_example(example) for example in examples] #이 labels들을 불러오면 전체 데이터의 label들을 확인할 수 있음
 
     batch_encoding = tokenizer.batch_encode_plus(
         [(str(example.text_a), str(example.text_b)) for example in examples],
