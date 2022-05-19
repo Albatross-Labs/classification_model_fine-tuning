@@ -43,11 +43,11 @@ def train(args,
 
     label_list = processor.get_labels() #label list 가져오기
     label_map = {label: i for i, label in enumerate(label_list)} #label을 인덱스로 바꾸는 것
-    train_labels = [label_map[example.label] for example in processor.getexamples(mode="train")] #train 데이터의 label들을 인덱스로 나열한 것
+    train_labels = [label_map[example.label] for example in processor.get_examples(mode="train")] #train 데이터의 label들을 인덱스로 나열한 것
 
     class_sample_count=np.array([len(np.where(train_labels==t)[0]) for t in np.unique(train_labels)]) #class 별로 개수 count
     weight=1./class_sample_count #class별로
-    samples_weight=np.arrary([weight[t] for t in train_labels])
+    samples_weight=np.array([weight[t] for t in train_labels])
     samples_weight=torch.from_numpy(samples_weight)
     train_sampler=WeightedRandomSampler(samples_weight.type('torch.DoubleTensor'), len(samples_weight))
 
