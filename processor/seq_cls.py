@@ -153,7 +153,7 @@ class SentimentProcessor(object):
                 logger.info(line)
             examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         print(examples[0], type(examples[0]))
-        return examples
+        return examples #여기에서 label을 가져올 수 있음
 
     def get_examples(self, mode):
         """
