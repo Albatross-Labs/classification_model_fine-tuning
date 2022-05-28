@@ -400,7 +400,6 @@ class HateSpeechProcessor(object):
             self._read_file(os.path.join(self.args.data_dir, self.args.task, file_to_read)), mode
         )
 
-
 seq_cls_processors = {
     "sentiment": SentimentProcessor,
     "theme": ThemeProcessor,
