@@ -181,7 +181,7 @@ class ThemeProcessor(object):
         self.args = args
 
     def get_labels(self):
-        return ["캐릭터", "아이템", "레이드", "업데이트", "이벤트", "버그", "해킹", "점검", "굿즈", "유저", "회사", "기타"]
+        return ["캐릭터", "컨텐츠", "이벤트", "버그", "점검",  "유저", "회사", "기타"]
 
     @classmethod
     def _read_file(cls, input_file):  # input 파일을 json 파일로 넘겨주기
@@ -245,7 +245,7 @@ class DAProcessor(object):
         self.args = args
 
     def get_labels(self):
-        return ["질문", "의견", "건의", "인증", "친목", "정보"]
+        return ["질문", "의견", "건의", "정보", "기타"]
 
     @classmethod
     def _read_file(cls, input_file):  # input 파일을 json 파일로 넘겨주기
@@ -408,7 +408,7 @@ seq_cls_processors = {
     "hate-speech": HateSpeechProcessor
 }
 
-seq_cls_tasks_num_labels = {"sentiment":3, "theme":12 ,"da":6, "nsmc": 2, "hate-speech": 3}
+seq_cls_tasks_num_labels = {"sentiment":3, "theme":8 ,"da":5, "nsmc": 2, "hate-speech": 3}
 
 seq_cls_output_modes = {
     "sentiment":"classification",

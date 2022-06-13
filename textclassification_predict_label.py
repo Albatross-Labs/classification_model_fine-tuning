@@ -2,6 +2,7 @@ import json
 import os
 import torch
 import numpy as np
+import re
 
 from transformers import AutoTokenizer, ElectraConfig, ElectraForSequenceClassification, TextClassificationPipeline
 
@@ -20,8 +21,8 @@ tokenizer = AutoTokenizer.from_pretrained( "beomi/KcELECTRA-base", do_lower_case
 
 '''sentiment model 불러오기 '''
 # local ver
-epoch=49 #모델 최고 성능이었던 epoch 설정
-model_output_dir=os.path.join("ckpt", "sentiment-stove_second-kcelectra_weightedsampler", f'epoch-{epoch}') #최고 성능이었던 epoch의 모델 불러오기
+epoch=15 #모델 최고 성능이었던 epoch 설정
+model_output_dir=os.path.join("ckpt", "sentiment-stove_third-kcelectra_weightedsampler", f'epoch-{epoch}') #최고 성능이었던 epoch의 모델 불러오기
 sentiment_model = ElectraForSequenceClassification.from_pretrained(model_output_dir)
 
 # huggingface ver
@@ -29,8 +30,8 @@ sentiment_model = ElectraForSequenceClassification.from_pretrained(model_output_
 
 ''' theme model 불러오기'''
 # local ver
-epoch=31 #모델 최고 성능이었던 epoch 설정
-model_output_dir=os.path.join("ckpt", "theme-stove_second_kcelectra_weightedsampler2", f'epoch-{epoch}') #최고 성능이었던 epoch의 모델 불러오기
+epoch=33 #모델 최고 성능이었던 epoch 설정
+model_output_dir=os.path.join("ckpt", "theme-stove_third_kcelectra_weightedsampler", f'epoch-{epoch}') #최고 성능이었던 epoch의 모델 불러오기
 theme_model = ElectraForSequenceClassification.from_pretrained(model_output_dir)
 
 # huggingface ver
@@ -38,8 +39,8 @@ theme_model = ElectraForSequenceClassification.from_pretrained(model_output_dir)
 
 ''' da model 불러오기'''
 # local ver
-epoch=47 #모델 최고 성능이었던 epoch 설정
-model_output_dir=os.path.join("ckpt", "da-stove_second-kcelectra_weightedsampler", f'epoch-{epoch}') #최고 성능이었던 epoch의 모델 불러오기
+epoch=13 #모델 최고 성능이었던 epoch 설정
+model_output_dir=os.path.join("ckpt", "da-stove_third-kcelectra_weightedsampler", f'epoch-{epoch}') #최고 성능이었던 epoch의 모델 불러오기
 da_model = ElectraForSequenceClassification.from_pretrained(model_output_dir)
 
 # huggingface ver
@@ -50,21 +51,24 @@ da_model = ElectraForSequenceClassification.from_pretrained(model_output_dir)
 
 
 ''' dataset 가져오기'''
-input_file='data.json' ### 설정하기
+input_file='data_final.json' ### 설정하기
 with open(input_file, "r", encoding="utf-8") as f:
     json_file = json.load(f)
     lines = []
 
     for d in json_file:
         line = str(d["header"]) + str(d['content'])
+        line=re.sub("&nbsp;", "", line)
+        line=re.sub("<br>", "", line)
+        line=re.sub("<.*?>", "", line)
         lines.append(line.strip())
 
 
 
 ''' labels dict 만들기'''
 sentiment_labels=["-1", "0", "1"]
-theme_labels=["캐릭터", "아이템", "레이드", "업데이트", "이벤트", "버그", "해킹", "점검", "굿즈", "유저", "회사", "기타"]
-da_labels=["질문", "의견", "건의", "인증", "친목", "정보"]
+theme_labels=["캐릭터", "컨텐츠", "이벤트", "버그", "점검",  "유저", "회사", "기타"]
+da_labels=["질문", "의견", "건의", "정보", "일상"]
 
 sentiment_label_dict={i:x for i,x in enumerate(sentiment_labels)}
 theme_label_dict={i:x for i,x in enumerate(theme_labels)}
@@ -95,5 +99,5 @@ for (i, data) in enumerate(json_file):
 
     results.append(data)
 
-with open('data_results.json', 'w', encoding='utf-8') as fw:
+with open('data_results_final2.json', 'w', encoding='utf-8') as fw:
     json.dump(results, fw, indent=4, ensure_ascii=False)
